@@ -24,7 +24,6 @@ class SisticSpider(scrapy.Spider):
         
         ##TODO: page num
         for num in range(1,3): 
-            print "num!!!!!!!!!!!"
             start_urls.append('http://www.sistic.com.sg/events/search?c=Theatre&l=20&o=1&p=%d' % (num))
         self.start_urls = start_urls
         self.name = '%s' % area
@@ -48,18 +47,29 @@ class SisticSpider(scrapy.Spider):
          #   yield scrapy.Request(response.urljoin(next_page), callback=self.parse)
 
     def parse_drama(self, response):
-        print  "keke!!!!!!"
+        drama_id = str(response.meta['url'])
         print  "url:" + self.host_url + str(response.meta['url'])
-        
         ##get title
+        title = ""
+        title_not_encode = ""
+        desc_not_encode = ""
+        url = self.host_url + str(response.meta['url'])
+        main_img = ""
+        desc = ""
         if len(response.xpath('//title/text()')) > 0:
             print "title: " + response.xpath('//title/text()')[0].extract().encode("utf-8")
+            title = response.xpath('//title/text()')[0].extract().encode("utf-8")
+            title_not_encode = response.xpath('//title/text()')[0].extract()
+
+            
         ##get desc
-        p_selectors= response.css('div.rich_content').css('div.more').css('p').extract()
+        p_selectors= response.css('div.rich_content').css('div.more').extract()
         p_selectors_length = len(p_selectors)
         if p_selectors_length > 0:
             for i in range(0,p_selectors_length):
                 print "desc: " + (remove_tags(p_selectors[i])).encode("utf-8").strip()
+                desc = desc + (remove_tags(p_selectors[i])).encode("utf-8").strip()
+                desc_not_encode = desc_not_encode + (remove_tags(p_selectors[i])).strip()
 
         ##get vendor, date, place and price
         vendor_selectors= response.css('div.entry')
@@ -76,6 +86,15 @@ class SisticSpider(scrapy.Spider):
         if image_selectors :
             main_img = self.host_url + image_selectors
             print "main_img:" + main_img
+
+        ##index            
+        doc = { 'id': drama_id, 
+                'url': url,
+                'drama_title': title_not_encode, 
+                'main_img': main_img,
+                'desc': desc_not_encode
+                }
+        res = self.es.index(index="drama", doc_type='sistic', id=drama_id, body=doc)          
 
 
     def closed(self, response):

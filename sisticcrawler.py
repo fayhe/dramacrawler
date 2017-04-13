@@ -55,6 +55,13 @@ class SisticSpider(scrapy.Spider):
         desc_not_encode = ""
         url = self.host_url + str(response.meta['url'])
         main_img = ""
+        venue = ""
+        ticket_price = ""
+        event_date = ""
+        start_sales_date = ""
+        promoter_name = ""
+        language = ""
+        duration = ""
         desc = ""
         if len(response.xpath('//title/text()')) > 0:
             print "title: " + response.xpath('//title/text()')[0].extract().encode("utf-8")
@@ -79,6 +86,22 @@ class SisticSpider(scrapy.Spider):
           #  if len(p_title_selectors) > 0:
           #      print "key:" + (remove_tags(p_title_selectors[0])).encode("utf-8").strip()
             if len(p_title_desc_selectors) > 0 and len(p_title_selectors) > 0:
+                key = (remove_tags(p_title_selectors[0])).strip()
+                value = (remove_tags(p_title_desc_selectors[0])).strip()
+                if key == 'Start Sales Date':
+                    start_sales_date = value
+                if key == 'Language':
+                    language = value  
+                if key == 'Duration':
+                    duration = value                                                          
+                if key == 'Promoter Name':
+                    promoter_name = value                     
+                if key == 'Event Date':
+                    event_date = value   
+                if key == 'Venue':
+                    venue = value  
+                if key == 'Ticket Pricing':
+                    ticket_price = value                                                            
                 print (remove_tags(p_title_selectors[0])).encode("utf-8").strip() + ":" + (remove_tags(p_title_desc_selectors[0])).encode("utf-8").strip()
 
          ##get main image
@@ -92,7 +115,14 @@ class SisticSpider(scrapy.Spider):
                 'url': url,
                 'drama_title': title_not_encode, 
                 'main_img': main_img,
-                'desc': desc_not_encode
+                'desc': desc_not_encode,
+                'start_sales_date': start_sales_date,
+                'language': language,
+                'duration': duration,
+                'promoter_name': promoter_name,
+                'event_date': event_date,
+                'venue': venue,
+                'ticket_price': ticket_price
                 }
         res = self.es.index(index="drama", doc_type='sistic', id=drama_id, body=doc)          
 

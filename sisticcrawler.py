@@ -12,10 +12,16 @@ from datetime import datetime
 from random import randint
 from time import sleep
 from w3lib.html import remove_tags
+from optparse import OptionParser
+
+topK = 10
+elasticsearch_ip = '172.31.5.42'
+
 
 class SisticSpider(scrapy.Spider):
     name = 'sisticspider'
-    es = Elasticsearch()
+    es = Elasticsearch() ##PROD TODO:
+    ##es = Elasticsearch([elasticsearch_ip])
     host_url = 'http://www.sistic.com.sg'
 
     def __init__(self, area=None, *args, **kwargs):
@@ -28,8 +34,15 @@ class SisticSpider(scrapy.Spider):
         self.start_urls = start_urls
         self.name = '%s' % area
 
+        for num1 in range(1,2): 
+            start_urls.append('http://www.sistic.com.sg/events/search?c=Film&l=20&o=1&p=%d' % (num1))
+        self.start_urls = start_urls
+        self.name = '%s' % area        
+
 
     def parse(self, response):
+        category = response.url[response.url.index('='): response.url.index('&')]
+
         for title in response.css('div.txt'):
  
             yield {'title': title.css('a ::attr(href)').extract_first()}
@@ -38,7 +51,8 @@ class SisticSpider(scrapy.Spider):
 
 	    yield scrapy.Request(response.urljoin(title.css('a ::attr(href)').extract_first()), callback=self.parse_drama,
         meta={'url': title.css('a ::attr(href)').extract_first(),
-              'title': title.css('a ::text').extract_first()
+              'title': title.css('a ::text').extract_first(),
+              'category': category
               })
 
 
@@ -47,6 +61,7 @@ class SisticSpider(scrapy.Spider):
          #   yield scrapy.Request(response.urljoin(next_page), callback=self.parse)
 
     def parse_drama(self, response):
+        category = response.meta['category']
         drama_id = str(response.meta['url'])
         print  "url:" + self.host_url + str(response.meta['url'])
         ##get title
@@ -110,6 +125,14 @@ class SisticSpider(scrapy.Spider):
             main_img = self.host_url + image_selectors
             print "main_img:" + main_img
 
+
+        nlp_tags = jieba.analyse.extract_tags(desc_not_encode, topK=topK, allowPOS=('ns', 'n'))
+        nlp_adj_tags = jieba.analyse.extract_tags(desc_not_encode, topK=topK, allowPOS=('a'))
+        nlp_all_tags = jieba.analyse.extract_tags(desc_not_encode, topK=topK)
+
+        print(",".join(nlp_tags))
+
+   
         ##index            
         doc = { 'id': drama_id, 
                 'url': url,
@@ -122,7 +145,11 @@ class SisticSpider(scrapy.Spider):
                 'promoter_name': promoter_name,
                 'event_date': event_date,
                 'venue': venue,
-                'ticket_price': ticket_price
+                'ticket_price': ticket_price,
+                'nlp_tags': ",".join(nlp_tags),
+                'nlp_all_tags': ",".join(nlp_all_tags),
+                'nlp_adj_tags': ",".join(nlp_adj_tags),
+                'category': category
                 }
         res = self.es.index(index="drama", doc_type='sistic', id=drama_id, body=doc)          
 

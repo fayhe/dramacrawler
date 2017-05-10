@@ -52,9 +52,10 @@ def generateRawDataList(type, category_label):
 
 
 def predict(summary, fh, svclf):
-	kv = fenci(summary).split()
+	kv = fenci(summary)
 	#print kv
 	mt = fh.transform([kv])
+	##print mt
 	num =  svclf.predict(mt)
 	#num =  gnb.predict(mt)
 	print num
@@ -63,18 +64,18 @@ def predict(summary, fh, svclf):
 #fh =  TfidfVectorizer(sublinear_tf = True,  max_df = 0.5); 
 generateRawDataList('剧情', 1)
 generateRawDataList('喜剧', 2)
-#generateRawDataList('动作', 3) ## has bug
+generateRawDataList('动作', 3) ## has bug
 generateRawDataList('爱情', 4)
-#generateRawDataList('科幻', 5) ## has bug
+generateRawDataList('科幻', 5) ## has bug
 #generateRawDataList('家庭', 5)
 #generateRawDataList('纪录片', 5)
 generateRawDataList('悬疑', 6)
 #print raw_data
 
 svclf = SVC(kernel = 'linear')#default with 'rbf' linear
-##fh =  TfidfVectorizer(sublinear_tf = True,  max_df = 0.5,  stop_words = 'chinese'); 
 
-fh = sklearn.feature_extraction.FeatureHasher( non_negative=True,input_type='string')
+fh =  TfidfVectorizer(sublinear_tf = True,  max_df = 0.5); 
+#fh = sklearn.feature_extraction.FeatureHasher( non_negative=True,input_type='string')
 #corpus = [
  #   '流感 / 战疫(港) 东南亚 艰险 来到 韩国 集装箱 全部 死亡 人 拖 身体 侥幸 逃入 闹市 携带 致命 猪 流感病毒 时间 病毒 迅速 蔓延 城市 角落 人 感染 死亡 阴影 引向 人 美丽 女医生 秀 爱 饰 是 单身 妈妈 不久前 遭遇 车祸 幸 消防队 救援 人员 饰 救出 丢失 重要 资料 备受 上司 苛责 值 韩国 蛇头 弟弟 流感 送入 仁海 医院 治疗 经 诊断 发现 流感 起因 死尸 横陈 集装箱 成为 查找 病源 关键 猪 流感病毒 成 爆发 蔓延 坐享 太平 民众 面临 灾难',
  #   '空中营救 / 急速天劫 饰 是 空警 奉命 飞往 伦敦 飞机 执行 任务 飞行 收到 未知 号码 发来 短信 人 举动 要求 秘密 账户 转账 会 每隔 杀死 航班 乘客 意识 到 事态 空姐 饰 乘客 饰 协助 试图 找出 人 事情 进展 超出 意料 本来 想 拯救 众人 意外 导致 人 死亡 乘客 当作 是否 能够 即 拯救 机上 乘客 洗脱 罪名'
@@ -83,7 +84,8 @@ fh = sklearn.feature_extraction.FeatureHasher( non_negative=True,input_type='str
 y = [0,1]
 gnb = nb.MultinomialNB(alpha = 0.01)
 #X = fh.fit_transform(corpus) TODO: trasform or fit tranform??
-X = fh.transform(raw_data)
+X = fh.fit_transform(raw_data)
+
 
 svclf.fit(X,category_list)  
 #gnb.fit(X, category_list)
@@ -164,4 +166,24 @@ predict(summary, fh, svclf	)
 
 print "《七种静默：忿怒》"
 summary = "九月：从前有一个小孩，叫九月。九月出生的九月，他的妈妈说，这样很方便，不会忘记他的名字。九月没有姓，因为他有很多个爸爸，他妈妈每天都带不同的爸爸回家，这是妈妈的工作。九月和妈妈住在一栋小公寓里，他们一起睡一张床。床上挂了一张布帘子，布帘子一关上，妈妈就工作了，布帘子一拉开，妈妈就收工了；妈妈说，这样很方便。《忿怒》叙述妓女玛莉、失业工人未夏、垃圾婆刘玉宝、窃贼七只手与小男孩九月的故事。他们聚居在香港某栋破落的公屋里，或近或远地交织成一张无法挣脱的命运网络。未夏与玛莉是已分手的老相好，分手后玛莉和一位烂赌男子交往，欠下巨额高利贷。未夏失业多日，他的弟弟未冬专犯大案，未夏经常受到连累，吃足警察的苦头。七只手与好友阿雄仔，从大陆一块到香港闯荡，多年来一事无成，终究沦为窃贼。垃圾婆只身养育独子长大成人，晚年却被儿子抛弃，只得孤独地在垃圾堆中苟活。年纪小小的九月在不同大人间辗转流养，背负一切苦痛的记忆长大。炙热酷夏，香港社会底层五个人的生命，在一条被遗弃的怒狗吠声中交会……"
+predict(summary, fh, svclf	)
+
+print "攻壳机动队"
+summary = "近未来，人类的各种器官均可实现移植，一时间机器人、生还人、仿生人充斥世间，与人类真假莫辨。某座繁华都市的大厦内，汉卡公司高管正与非洲来宾洽谈业务，突然宴会变成血腥大屠杀，暴走的机器人大开杀戒。隶属公安九课的米拉·基里安少佐（斯嘉丽·约翰逊 Scarlett Johansson 饰）带领巴特（皮鲁·埃斯贝克 Pilou Asbæk 饰）等手下赶往现场，平息事态。根据对暴走艺伎机器人的调查发现，被称作“久世”的神秘之人策划了这一系列的行动，而且他的目标全部指向了掌握着生化前沿尖端科技的汉卡公司及其研发人员。经过一番凶险的周旋，少佐逐渐逼近真相，同时也渐渐解开了发生在自己身上的惊天秘密"
+predict(summary, fh, svclf	)
+
+print "云图"
+summary = "1850年，南太平洋，美国公证人亚当·尤因（吉姆·斯特吉斯 Jim Sturgess 饰）在船上被不明寄生虫病折磨，他用日记记录下自己所见所闻；1931年，苏格兰，落魄青年罗伯特·弗罗比舍（本·卫肖 Ben Whishaw 饰）为音乐大师记录曲谱，受到半本旅行日记的启发创作出了恢宏壮阔的《云图六重奏》；1975年，美国加州，小报记者路易莎·雷（哈莉·贝瑞 Halle Berry 饰）冒着生命危险调查一桩核电站丑闻，在老唱片店她被一首不知名的乐章打动；2012年，英国伦敦，被囚禁在养老院的出版商蒂莫西·卡文迪什（吉姆·布劳德本特 Jim Broadbent 饰）揣着一叠由女记者写成的纪实文学，打算将自己的“越狱经历”拍成电影；乌托邦未来，首尔，餐厅服务员克隆人星美-451（裴斗娜 Doona Bae 饰）开始形成自我意识和反抗人类，她在人类图书馆看了一部飞跃老人院的电影；文明毁灭后的未来，夏威夷，牧羊土着扎克里（汤姆·汉克斯 Tom Hanks 饰）对高科技文明的先知心怀敌意，他的部落唯一相信的女神叫星美…… 不同的人物、场景和事件在时空中更迭变幻，不变的是每个主角身上都带有彗星形状的胎记。它像亘古灵魂的烙印，将人性中的反抗精神代代延续，最终织成一幅浩瀚璀璨的云图"
+predict(summary, fh, svclf	)
+
+print "摔跤吧！爸爸摔跤吧！爸爸"
+summary = "马哈维亚·辛格·珀尕（阿米尔·汗 Aamir Khan 饰）曾是印度国家摔跤冠军，因生活所迫放弃摔跤。他希望让儿子可以帮他完成梦想——赢得世界级金牌。结果生了四个女儿本以为梦想就此破碎的辛格却意外发现女儿身上的惊人天赋，看到冠军希望的他决定不能让女儿的天赋浪费，像其他女孩一样只能洗衣做饭过一生 ，再三考虑之后，与妻子约定一年时间按照摔跤手的标准训练两个女儿：换掉裙子 、剪掉了长发，让她们练习摔跤，并赢得一个又一个冠军，最终赢来了成为榜样激励千千万万女性的机会"
+predict(summary, fh, svclf	)
+
+print "银河护卫队2"
+summary = "漫威影业最新力作《银河护卫队2》带着全新劲爆好听的“劲歌金曲第二辑”回归大银幕！银河护卫队在本集中穿越宇宙，继续外太空的史诗冒险之旅。他们必须共同作战，守护彼此；同时要解开“星爵”彼得·奎尔的身世之谜。旧日敌人变为盟友，漫画中深受喜爱的角色也会现身，对护卫队出手援助。漫威电影宇宙则将持续扩张，进入新纪元！"
+predict(summary, fh, svclf	)
+
+print "速度与激情8"
+summary = "多米尼克（范·迪塞尔 Vin Diesel 饰）与莱蒂（米歇尔·罗德里格兹 Michelle Rodriguez 饰）共度蜜月，布莱恩与米娅退出了赛车界，这支曾环游世界的顶级飞车家族队伍的生活正渐趋平淡。然而，一位神秘女子Cipher（查理兹·塞隆 Charlize T heron 饰）的出现，令整个队伍卷入信任与背叛的危机，面临前所未有的考验。"
 predict(summary, fh, svclf	)

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>电影分类预测</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -43,14 +43,17 @@ $(document).ready(function(){
 
 <div class="container">
   <h2>电影分类预测</h2>
+  支持分类：'剧情','喜剧'，'动作'，'爱情'，'科幻'，'音乐'，'纪录片'，'悬疑'，'情色'，'历史'
  <!-- <form action="/"> -->
+   <br>
     <div class="form-group">
+
       <label for="email">电影名字:</label>
       <input type="name" class="form-control" id="name" placeholder="Enter name" >
     </div>
     <div class="form-group">
       <label for="pwd">电影简介:</label>
-      <input type="summary" class="form-control" id="summary" placeholder="Enter summary" name="summary">
+      <textarea rows="10" cols="50" type="summary" class="form-control" id="summary" placeholder="Enter summary" name="summary"></textarea> 
     </div>
 
     <button id="post-btn" name="post-btn" class="btn btn-default">预测影片类型</button>

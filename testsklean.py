@@ -12,6 +12,7 @@ from sklearn.svm import SVC
 from sklearn.feature_extraction.text import TfidfVectorizer
 import csv
 import sklearn.externals.joblib as jl
+import pickle
 
 raw_data = []
 category_list = []
@@ -101,7 +102,7 @@ y = [0,1]
 gnb = nb.MultinomialNB(alpha = 0.01)
 #X = fh.fit_transform(corpus) TODO: trasform or fit tranform??
 X = fh.fit_transform(raw_data)
-
+pickle.dump(fh.vocabulary_, open('vocabulary', 'w'))
 
 svclf.fit(X,category_list)  
 jl.dump(svclf,'final.pkl') ##todo
@@ -261,3 +262,6 @@ predict(summary, fh, svclf	)
 print "《小问号和没名字》亲子音乐剧" ##: 喜剧 / 爱情 / 情色
 summary = "如果一个人没有名字，还真的是挺麻烦的。别人怎么叫他？他变了样子谁还认得他？如果他不见了，怎么跟警察说？小问号和朋友小逗号还有感叹号，就遇到这么个人。他们还根据这个人不同的特质，给他取了不同的名字，可是“没名字”真的喜欢这些名字吗？继《小问号和探险家》荣获生活剧场艺术奖2016最佳青少儿演出后，原班人马郭践红（导演）、黄素怀（编剧）、小寒（作词）和黄有杰（作曲）再次团聚，用没头没脑的叙事，有说有笑的语言，如痴如醉的歌曲，为您奉上小问号系列的第二部《小问号和没名字》"
 predict(summary, fh, svclf	)
+
+
+

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>电影分类预测</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+  <script>
+
+$(document).ready(function(){
+ 
+    $("#post-btn").click(function(){  
+     
+        var nameVal = $("#name").val(); 
+        var summaryVal = $("#summary").val();
+        var countryVal = $("#country").val();
+        var typeVal = $("#type").val();
+
+       $.ajax({
+       type: "POST",
+       contentType: "application/json; charset=utf-8",
+       url: "/classify_lanpian",
+       success: function (data) {
+
+          alert( "预测类型: " + data["type"] );
+       },
+       data: JSON.stringify({name:nameVal,summary:summaryVal,country:countryVal,type:typeVal}),
+ 
+      dataType: "json"
+      });
+        
+    });
+ });   
+</script>
+</head>
+
+
+
+<body>
+
+<div class="container">
+  <h2>烂片预测</h2>
+  支持分类：'好片'（评分>=8）,'俗片'(评分>＝6 and <8)，'烂片'(评分<6)
+ <!-- <form action="/"> -->
+   <br>
+    <div class="form-group">
+
+      <label for="email">电影名字:</label>
+      <input type="name" class="form-control" id="name" placeholder="Enter name" >
+    </div>
+    <div class="form-group">
+
+    <label for="email">国家:</label>
+     <select id="country" name="country">
+          <option value="0">非中国大陆</option>
+          <option value="1">中国大陆</option>
+     </select>
+    <label for="email">类型:</label>
+     <select id="type" name="type">
+          <option value="1">剧情</option>
+          <option value="2">喜剧</option>
+          <option value="3">动作</option>
+          <option value="4">爱情</option>
+          <option value="5">科幻</option>
+          <option value="8">音乐</option>
+          <option value="7">记录</option>
+          <option value="6">悬疑</option>
+          <option value="9">情色</option>
+          <option value="10">历史</option>
+     </select> 
+
+
+    </div>
+    <div class="form-group">
+      <label for="pwd">电影简介:</label>
+      <textarea rows="10" cols="50" type="summary" class="form-control" id="summary" placeholder="Enter summary" name="summary"></textarea> 
+    </div>
+
+    <button id="post-btn" name="post-btn" class="btn btn-default">预测影片类型</button>
+ <!-- </form> -->
+</div>
+
+</body>
+</html>

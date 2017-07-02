@@ -1,0 +1,12 @@
+import pickle
+
+
+
+def predict(summary, fh, svclf):
+	svclf = pickle.loads('final.pkl')
+	num =  svclf.predict(mt)
+	for (k,v) in catedict.viewitems():
+		if(v==num):
+			print(" do you mean...%s" % k )
+	print num
+	return num	

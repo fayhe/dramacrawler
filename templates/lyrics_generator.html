@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>普通歌词生成器v1.0</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+  <script>
+
+$(document).ready(function(){
+ 
+    $("#post-btn").click(function(){  
+     
+      var keywordVal = $("#keyword").val(); 
+       alert( "准备开始写歌啦！请点击按钮关闭弹出框并耐心等待十几秒：）" );
+       
+       $.ajax({
+       type: "POST",
+       contentType: "application/json; charset=utf-8",
+       url: "/write_lyrics",
+
+       success: function (data) {
+
+          alert( "生成歌词: " + data["lyrics"] );
+          $("#summary").val(data["lyrics"]);
+       },
+       data: JSON.stringify({word:keywordVal}),
+ 
+      dataType: "json"
+      });
+        
+    });
+ });   
+</script>
+</head>
+
+
+
+<body>
+
+ 
+
+
+<div class="container">
+  <h2>普通de歌词生成器v1.0</h2>
+ 
+   <br>  
+
+    <label for="email">选择歌词der第一个词:</label>
+     <select id="keyword" name="keyword">
+         <!-- <option value="0">非中国大陆</option>
+          <option value="1">中国大陆</option> -->
+          {% for v in toPass %}
+             <option value="{{ v }}">{{ v }}</option>            
+          {% endfor %}
+     </select>
+  
+
+    <button id="post-btn" name="post-btn" class="btn btn-default">点击这里开始写歌</button>
+
+    </div>
+    <div class="form-group">
+      <label for="pwd">生成de歌词:</label>
+      <textarea rows="30" cols="40" type="summary" class="form-control" id="summary" placeholder="Enter summary" name="summary"></textarea> 
+    </div>
+
+ <!-- </form> -->
+</div>
+
+</body>
+</html>
